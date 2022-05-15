@@ -1,0 +1,30 @@
+Creation of tables:
+
+Create table Supplier_Info(Supplier_ID number(5) constraint s_id_pk primary key, Supplier_Name varchar(10) NOT NULL, Address varchar(20) NOT NULL);
+
+Create table Supplier_Mobile(Supplier_ID number(5), Phone_No number(10) constraint pn_c check (Phone_No>6000000000 and Phone_No<10000000000), constraint s_id_fk foreign key(Supplier_ID) references Supplier_Info(Supplier_ID), constraint pk_s primary key(Supplier_ID,Phone_No));
+
+Create table Equipments(Eq_ID number(5) constraint e_id_pk primary key, Eq_Name varchar(20) UNIQUE);
+
+Create table Equipments_Qty(Eq_Name VARCHAR(20) constraint eq_name_pk primary key, Quantity number(5), Quantity_Available number(5),constraint eq_name_fk Foreign key(Eq_Name) references Equipments(Eq_Name));
+Create table Supply(Supplier_ID number(10), Eq_ID  number(10), Supplied_qty number(5) NOT NULL, price number(5) NOT NULL, constraint s_id_fk1 foreign key(Supplier_ID) references Supplier_Info(Supplier_ID), constraint e_id_fk1 foreign key(Eq_ID) references Equipments(Eq_ID), constraint pk1 primary key(Supplier_ID,Eq_ID));
+
+Create table students_info( Roll_No number(10) constraint rn_pk primary key, Name varchar(10), Year number(2), Branch varchar(6) constraint b_c check (Branch in('COE','CHE','MEE','EEE','ENC','ECE','CIE','MTX','EIC','BTX')), Subgroup varchar(7),  Hostel varchar(1) check (Hostel>='A' and Hostel<='N'));
+
+Create table Employee_Info(E_ID number(10) primary key, E_Name varchar(10), Salary number(5) NOT NULL, House_No number(3), loacality varchar(7), City varchar(9), category varchar(10));         
+
+Create table Employee_Phone(E_ID number(10), Phone_No number(10) constraint pn_c1 check (Phone_No>6000000000 and Phone_No<10000000000), constraint pk3 primary key(E_ID,Phone_No), constraint fk2 foreign key(E_ID) references Employee_Info(E_ID));
+
+Create table faculty_associated(E_ID  number(10), Time_available varchar(30),  
+Designation varchar(10), Office_No varchar(5) NOT NULL, constraint fk4 foreign key(E_ID) references Employee_Info(E_ID));
+Create table coach(E_ID number(5) constraint pk4 primary key, Time_available varchar(30), Asoociated_Sports varchar(10),constraint fk5 foreign key(E_ID) REFERENCES Employee_Info(E_ID));
+
+Create table issues_1(Roll_No number(10), Eq_Name varchar(20),Qty_issued number(10), ToI timestamp, constraint fkk12 foreign key(Eq_Name) REFERENCES Equipments(Eq_Name), constraint fkk22 foreign key(Roll_No) REFERENCES students_info(Roll_No), constraint pkk32 primary key(Eq_Name,Roll_No));
+
+Create table meet(E_ID number(10), Roll_No number(10), ToM VARCHAR2(30), constraint fk8 foreign key(Roll_No) REFERENCES students_info(Roll_No), constraint fk9 foreign key(E_ID) REFERENCES Equipments(Eq_ID), constraint pk7 primary key(E_ID,Roll_No));
+
+Create table thapar_team(Team_ID number(7), Sport_Ass varchar(9), Roll_No number(9),constraint fk10 foreign key(Roll_No) REFERENCES students_info(Roll_No), constraint pk8 primary key(Roll_No, Team_ID));
+
+Create table grounds(place_id number(9) primary key, place_name varchar(10));
+
+Create table maintained_by(place_id number(10), last_man date, next_man date, constraint fk12 foreign key(place_id) references grounds(place_id)); 

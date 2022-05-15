@@ -1,0 +1,122 @@
+For adding new supply entry
+Create procedure supply_pro1(A in number, B in number, C in number, D in number) as
+BEGIN
+Insert into supply values(A,B,C,D);
+END;	
+Declare
+A NUMBER;
+B NUMBER;
+C NUMBER;
+D NUMBER;
+Begin
+A:=&Enter_the_Supplier_ID;
+B:=&Enter_the_Equipment_ID;
+C:=&Enter_the_Quantity;
+D:=&Enter_the_Price;
+Supply_pro1(A,B,C,D);
+END;
+
+For adding a new entry in Issues table and making corresponding change in Quantity available in Equipments table:
+Trigger to check condition of Quantity_Issued < Quantity_Available:
+Create trigger tri_issue3
+Before insert on issues1
+For each row
+Declare
+B NUMBER;
+BEGIN
+SELECT QUANTITY_AVAILABLE INTO B FROM EQUIPMENTS_QTY WHERE EQ_Name=:NEW.Eq_NAME;
+IF(:NEW.QTY_ISSUED>B) THEN
+RAISE_APPLICATION_ERROR(-20000,'ITEM CANNOT BE ISSUED');
+END IF;		
+END;
+
+
+Stored Procedure to update Qty_Available value in Equipments_Qty table when an issue is made by student:
+Create procedure update_qty2(B IN varchar2,C IN NUMBER) IS
+BEGIN
+Update equipments_qty  set QUANTITY_AVAILABLE= QUANTITY_AVAILABLE-C where  EQ_Name like B;
+end;
+PL/SQL Code:
+Declare
+A NUMBER;
+B varchar2(30);
+C NUMBER;
+Begin
+A:=&Enter_Roll_No;
+B:=&Enter_Eq_Name;
+C:=&Enter_qty_issued;
+insert into issues1 values(A,B,C,SYSDATE);
+update_qty2(B,C);
+end;
+
+To display Equipments_qty table:
+select *from equipments_qty;
+
+To update the value in Qty_Available of Equipments_Qty table when a student returns the equipment and to delete the entry in Issues table.
+
+Stored procedure for updation in Qty_Available value in Equipments_Qty table:
+Create procedure Update_quantity23(A IN varchar2, B IN NUMBER) as
+C NUMBER;
+BEGIN	
+Select quantity_available into C from equipments_qty where  EQ_Name like A;
+C:=C+B;
+IF C>QUANTITY THEN
+DBMS_OUTPUT.PUT_LINE(‘SOME ERROR’);
+ELSE
+Update equipments_qty set QUANTITY_AVAILABLE= C where  EQ_Name like A;
+END IF;
+END;
+
+PL/SQL CODE:
+
+DECLARE
+A varchar2(15);
+B number;
+BEGIN 
+A:=&Eq_name;
+Select Qty_issued into b from issues1 where Eq_Name like A;
+Delete from issues1 where Eq_Name like A;
+Update_quantity1223(A,B);
+End;
+
+To display table equipments issued by a student:
+Declare
+A number:=&ROLL;
+Cursor C1 is select Eq_Name, Qty_issued from issues1 where Roll_no=A; 
+REC ISSUES1.Eq_Name%TYPE;
+REC2 ISSUES1.Qty_issued%TYPE;
+Begin
+OPEN C1;
+LOOP
+FETCH C1 INTO REC, REC2;
+EXIT WHEN C1%NOTFOUND;
+DBMS_OUTPUT.PUT_LINE('EQUIPMENT:'||REC);
+DBMS_OUTPUT.PUT_LINE('QUANTITY:'||REC2);
+END LOOP;
+IF C1%ROWCOUNT=0 THEN
+DBMS_OUTPUT.PUT_LINE('NO EQ ISSUED');
+END IF;
+CLOSE C1;
+END;
+
+For setting up a meeting with coach:
+
+create procedure meet_setup12(A in number, D in number, B IN VARCHAR2) as
+Begin
+insert into meet values(A,D,B);
+END;
+	
+Declare
+D number;
+A number;
+C varchar2(30);
+B VARCHAR(30);
+
+Begin
+D:=&Enter_coach_id;
+A:=&ENTER_ROLLNO;
+Select time_available into C from coach where E_ID=D;
+DBMS_OUTPUT.PUT_LINE(‘Available time’||C);
+B:=&ENTER_TIME;
+meet_setup12(D,A,B);
+End;
